@@ -33,7 +33,9 @@ sudo apt-get install -y  build-essential python3 libfftw3-dev python3-venv libpy
 #### Redhat based distributions:
 ```
 dnf group install -y "Development Tools"
-dnf install -y python3-devel fftw3-devel
+dnf install -y python3 python3-devel fftw3 fftw3-devel
+pip install setuptools-scm
+pip install meson-python
 ```
 
 #### MacOS
@@ -76,6 +78,12 @@ pip install -U meson-python setuptools setuptools-scm
 If you plan to modify PyORBIT's code, install it in editable mode. 
 You will NOT need to rebuild after modifications to the code. [Meson](MesonBuild.md) will rebuild as necessary on import.
 ```
+PYORBIT_DIR="${PWD}"
+cd "${PYORBIT_DIR}/ext"
+git clone --branch=master https://github.com/hannes-bartosik/PTC.git
+cd PTC
+mkdir obj/
+cd "${PYORBIT_DIR}"
 pip install --no-build-isolation --editable .
 ```
 

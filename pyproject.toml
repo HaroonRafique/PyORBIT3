@@ -3,7 +3,7 @@ build-backend = 'mesonpy'
 requires = ['meson-python', "setuptools>=45", "wheel", "setuptools_scm"]
 
 [project]
-name = 'PyORBIT'
+name = 'PTC-PyORBIT'
 dynamic = ["version"]
 description = 'Use meson-python to build c++ anf python modules.'
 requires-python = '>=3.9'
@@ -15,7 +15,8 @@ authors = [
   {name = 'Alexander Zhukov', email = 'zhukovap@ornl.gov'},
 ]
 
-
 [tool.setuptools_scm]
 
-
+[tool.meson-python]
+#sdist-exclude = ["ext/PTC/source/*.a"]
+module = "ptc_orbit"
