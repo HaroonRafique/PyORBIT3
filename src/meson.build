@@ -14,24 +14,6 @@ dependencies = []
 
 dependencies += dependency('fftw3', version: '>= 3.0.0', required: true)
 
-# Detecting if MPICH or OPENMPI are installed and enabling support if present
-mpich_dependency = dependency('mpich', version: '>= 4.0.0', required: false)
-openmpi_dependency = dependency('ompi', version: '>= 5.0.0', required: false)
-
-# Add libptc as a dependency
-libptc_dep = dependency('ptc', required: false, fallback: ['ext/PTC', 'libptc'])
-dependencies += libptc_dep
-
-if mpich_dependency.found()
-	cpp_args = ['-fPIC', '-std=c++11', '-DUSE_MPI=1']
-	dependencies += mpich_dependency
-elif openmpi_dependency.found()
-	cpp_args = ['-fPIC', '-std=c++11', '-DUSE_MPI=1']
-	dependencies += openmpi_dependency
-else
-	cpp_args = ['-fPIC', '-std=c++11']
-endif
-
 sources = files([
     'linac/wrap_linacmodule.cc',
 	'linac/tracking/linac_tracking.cc',
@@ -129,6 +111,7 @@ sources = files([
 	'trackerrk4/PyExternalEffects.cc',
 	'trackerrk4/RungeKuttaTracker.cc',
 	'trackerrk4/wrap_ext_effects_container.cc',
+	'libmain/libmain.cc',
 	'mpi/wrap_orbit_mpi.cc',
 	'mpi/wrap_mpi_comm.cc',
 	'mpi/orbit_mpi.cc',
@@ -225,7 +208,7 @@ sources = files([
 	'teapot/wrap_matrix_generator.cc',
 	'teapot/teapotbase.cc',
 	'teapot/MatrixGenerator.cc'
-])
+]) 
 inc = include_directories([
   python.get_variable('INCLUDEPY', ''),
     'main',
@@ -254,20 +237,20 @@ inc = include_directories([
 	'orbit/BunchDiagnostics',
 	'orbit',
 	'utils/integration',
+	'libmain',
 	'orbit/Apertures'
-
+    
 ])
 
 
 core_lib = library('core',
     sources: sources,
     include_directories: inc,
-    cpp_args: cpp_args,
+    cpp_args: ['-fPIC', '-std=c++11'],
     override_options: ['b_lundef=false'],
-#~     dependencies: dependencies,
-    dependencies: dependencies + [libptc_dep],  # Link against libptc
-    override_options: ['b_lundef=false'],
+    dependencies: dependencies,
     install: true,
+
 )
 
 core_dep = declare_dependency(link_with : core_lib)
@@ -275,9 +258,8 @@ core_dep = declare_dependency(link_with : core_lib)
 python.extension_module('orbit_mpi',
       sources: [base + '/mpi_init.cc'],
       include_directories: inc,
-      cpp_args: cpp_args,
-#~       dependencies: [core_dep],
-      dependencies: [core_dep, libptc_dep],  # Add libptc_dep
+      cpp_args: ['-fPIC', '-std=c++11'],
+      dependencies: [core_dep],
       install: true,
       subdir: 'orbit/core',
 )
@@ -408,3 +390,4 @@ python.extension_module('error_base',
     install: true,
    subdir: 'orbit/core',
 )
+

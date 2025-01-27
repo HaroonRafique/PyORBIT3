@@ -1,24 +1,18 @@
 [build-system]
 build-backend = 'mesonpy'
-requires = ['meson-python', "setuptools>=45", "wheel", "setuptools_scm"]
+requires = [
+    'meson-python',
+    'meson>=1.2.3',
+    'setuptools>=45',
+    'wheel',
+    'setuptools_scm'
+]
 
 [project]
-name = 'ptcpyorbit'
-dynamic = ["version"]
-description = 'Use meson-python to build c++ anf python modules.'
+name = 'PyORBIT'
+dynamic = ['version']
+description = 'Use meson-python to build C++ and Python modules with Meson.'
 requires-python = '>=3.9'
-#dependencies = [
-#'setuptools',
-#'setuptools-scm'
-#]
 authors = [
   {name = 'Alexander Zhukov', email = 'zhukovap@ornl.gov'},
 ]
-
-#[tool.setuptools_scm]
-
-#[tool.meson-python]
-#module = "ptc_orbit"
-
-#[tool.meson-python]
-#sdist-exclude = ["ext/PTC/libptc.a"]

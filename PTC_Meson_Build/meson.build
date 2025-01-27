@@ -39,7 +39,8 @@ fort_sources = files(
   'source/Sa_extend_poly.f90',
   'source/Sb_sagan_pol_arbitrary.f90',
   'source/Sc_euclidean.f90',
-  'source/Sd_frame.f90'
+  'source/Sd_frame.f90',
+  'interface/ptcinterface.f90'
 )
 
 # Define object dependencies based on Makefile rules
@@ -80,26 +81,28 @@ dependencies = {
   'ptcinterface.f90': ['St_pointers.f90']
 }
 
-# Build library with proper ordering
-ordered_fort_sources = []
-visited = []
+#~ # Build library with proper ordering
+#~ ordered_fort_sources = []
+#~ visited = []
 
-foreach src : fort_sources
-  if dependencies.has(src.basename())
-    foreach dep : dependencies[src.basename()]
-      if dep not in visited
-        ordered_fort_sources += files('source/' + dep)
-        visited += dep
-      endif
-    endforeach
-  endif
-  ordered_fort_sources += src
-endforeach
+#~ foreach src : fort_sources
+#~   if dependencies.has(src.basename())
+#~     foreach dep : dependencies[src.basename()]
+#~       if dep not in visited
+#~         ordered_fort_sources += files('source/' + dep)
+#~         visited += dep
+#~       endif
+#~     endforeach
+#~   endif
+#~   ordered_fort_sources += src
+#~ endforeach
 
 # Build shared library
 libptc = shared_library(
   'ptc',
-  ordered_fort_sources,
+#~   ordered_fort_sources,
+  fort_sources,
   include_directories: ptc_inc_dirs,
+  dependencies: [core_dep],  
   install: true
 )
