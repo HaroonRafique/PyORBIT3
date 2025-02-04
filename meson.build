@@ -6,7 +6,11 @@ project('PyORBIT', ['cpp', 'fortran'],
 # Add Fortran compiler
 #fc = meson.get_compiler('fortran')
 
+# Add libptc as a subproject
+libptc_proj = subproject('libptc')
+libptc_dep = libptc_proj.get_variable('libptc_dep')
+
 # Include subdirectories
 subdir('src')
 subdir('py/orbit')
-subdir('ext/PTC')  # Add the PTC library subdirectory
+#subdir('ext/PTC')  # Add the PTC library subdirectory

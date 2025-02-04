@@ -13,6 +13,9 @@ base = meson.current_source_dir() + '/core'
 dependencies = []
 
 dependencies += dependency('fftw3', version: '>= 3.0.0', required: true)
+#dependencies += dependency('libptc_dep', required: true)
+dependencies += dependency('libptc_dep')
+
 
 sources = files([
     'linac/wrap_linacmodule.cc',
@@ -390,4 +393,3 @@ python.extension_module('error_base',
     install: true,
    subdir: 'orbit/core',
 )
-
