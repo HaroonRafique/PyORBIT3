@@ -21,7 +21,8 @@ from orbit.teapot import TEAPOT_Lattice
 from orbit.teapot import BaseTEAPOT
 
 # import the interface to PTC
-from libptc_orbit import *
+# ~ from libptc_orbit import *
+from ptc import *
 
 
 class PTC_Lattice(TEAPOT_Lattice):

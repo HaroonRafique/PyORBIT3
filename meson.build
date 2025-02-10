@@ -15,3 +15,4 @@ libptc_dep = libptc_proj.get_variable('libptc_dep')
 # Include subdirectories
 subdir('src')
 subdir('py/orbit')
+subdir('py/ext')
