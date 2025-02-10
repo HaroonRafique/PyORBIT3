@@ -246,7 +246,6 @@ inc = include_directories([
 ])
 
 
-dependencies += dependency('libptc')
 #~ ptc_sources = libptc_dep.get_variable('sources')
 #~ ptc_includes = libptc_dep.get_variable('include_directories')
 
@@ -261,6 +260,8 @@ core_lib = library('core',
 )
 
 core_dep = declare_dependency(link_with : core_lib)
+
+dependencies += dependency('libptc')
 
 # Retrieve from libptc
 libptc_inc_dirs = libptc_proj.get_variable('dep_inc_dirs')
