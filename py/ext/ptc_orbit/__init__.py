@@ -6,8 +6,8 @@ from orbit.teapot_base import TPB
 from orbit.teapot import TEAPOT_Lattice
 from orbit.teapot import BaseTEAPOT
 from orbit.teapot.teapot_matrix_lattice import TEAPOT_MATRIX_Lattice
-from ptc_orbit import PTC_Lattice
-from ptc_orbit import PTC_Node
+from .ptc_orbit import PTC_Lattice
+from .ptc_orbit import PTC_Node
 
 __all__ = []
 __all__.append("TPB")

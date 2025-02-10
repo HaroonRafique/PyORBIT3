@@ -260,16 +260,16 @@ core_dep = declare_dependency(link_with : core_lib)
 
 
 # Retrieve from libptc
-libptc_inc_dirs = libptc_proj.get_variable('dep_inc_dirs')
-libptc_sources = libptc_proj.get_variable('cpp_sources')
+libptc_orbit_inc_dirs = libptc_orbit_proj.get_variable('dep_inc_dirs')
+libptc_orbit_sources = libptc_orbit_proj.get_variable('cpp_sources')
 
-python.extension_module('ptc',
-      sources: libptc_sources,
-      include_directories: [inc, libptc_inc_dirs],
+python.extension_module('pylibptc_orbit',
+      sources: libptc_orbit_sources,
+      include_directories: [inc, libptc_orbit_inc_dirs],
       cpp_args: ['-fPIC', '-std=c++11'],
-      dependencies: [core_dep, libptc_dep],
+      dependencies: [core_dep, libptc_orbit_dep],
       install: true,
-#~       subdir: 'orbit/core',
+#      subdir: 'orbit/core',
 )
       
 python.extension_module('orbit_mpi',

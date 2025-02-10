@@ -22,7 +22,7 @@ from orbit.teapot import BaseTEAPOT
 
 # import the interface to PTC
 # ~ from libptc_orbit import *
-from ptc_orbit import *
+from pylibptc_orbit import *
 
 
 class PTC_Lattice(TEAPOT_Lattice):
@@ -194,6 +194,19 @@ def synchronousSetPTC(ival):
         raise SystemExit(1)
 
     ptc_synchronous_set_(ival)
+    
+
+def synchronousAfterPTC(ival):
+    """
+    Calls ptc_synchronous_set_.
+    """
+    if ival >= 0:
+        print("===============================")
+        print("synchronousAfterPTC requires ival < 0")
+        print("STOP.")
+        sys.exit(1)
+    ptc_synchronous_after_(ival)
+
 
 
 def trackBunchThroughLatticePTC(lattice, bunch, PhaseLength):
