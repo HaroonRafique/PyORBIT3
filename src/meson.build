@@ -262,10 +262,8 @@ core_lib = library('core',
 
 core_dep = declare_dependency(link_with : core_lib)
 
-# Retrieve include directories
+# Retrieve from libptc
 libptc_inc_dirs = libptc_proj.get_variable('dep_inc_dirs')
-
-# Retrieve source files (if needed)
 libptc_sources = libptc_proj.get_variable('cpp_sources')
 
 python.extension_module('ptc',
