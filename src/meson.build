@@ -247,6 +247,9 @@ inc = include_directories([
 
 
 dependencies += dependency('libptc')
+#~ ptc_sources = libptc_dep.get_variable('sources')
+#~ ptc_includes = libptc_dep.get_variable('include_directories')
+
 core_lib = library('core',
     sources: sources,
     include_directories: inc,
@@ -259,6 +262,21 @@ core_lib = library('core',
 
 core_dep = declare_dependency(link_with : core_lib)
 
+# Retrieve include directories
+libptc_inc_dirs = libptc_proj.get_variable('dep_inc_dirs')
+
+# Retrieve source files (if needed)
+libptc_sources = libptc_proj.get_variable('cpp_sources')
+
+python.extension_module('ptc',
+      sources: libptc_sources,
+      include_directories: [inc, libptc_inc_dirs],
+      cpp_args: ['-fPIC', '-std=c++11'],
+      dependencies: [dependencies],
+      install: true,
+      subdir: 'orbit/core',
+)
+      
 python.extension_module('orbit_mpi',
       sources: [base + '/mpi_init.cc'],
       include_directories: inc,
@@ -267,7 +285,6 @@ python.extension_module('orbit_mpi',
       install: true,
       subdir: 'orbit/core',
 )
-
 
 python.extension_module('bunch',
     sources: [base + '/bunch_init.cc'],
