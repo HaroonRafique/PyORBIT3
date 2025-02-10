@@ -14,7 +14,7 @@ dependencies = []
 
 dependencies += dependency('fftw3', version: '>= 3.0.0', required: true)
 #dependencies += dependency('libptc_dep', required: true)
-dependencies += dependency('libptc_dep')
+#dependencies += dependency('libptc_dep')
 
 
 sources = files([
@@ -246,6 +246,7 @@ inc = include_directories([
 ])
 
 
+dependencies += dependency('libptc')
 core_lib = library('core',
     sources: sources,
     include_directories: inc,

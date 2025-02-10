@@ -6,8 +6,25 @@ project('PyORBIT', ['cpp', 'fortran'],
 # Add Fortran compiler
 #fc = meson.get_compiler('fortran')
 
+
 # Add libptc as a subproject
 libptc_proj = subproject('libptc')
+#~ libptc_dep = dependency(
+#~ 	'libptc', 
+#~ 	fallback : ['libptc', 'libptc_dep'],
+#~ 	default_options: ['default_library=shared']
+#~ )
+
+libptc_dep = dependency('libptc', fallback:['libptc', 'libptc_dep'])
+
+#~ project_dep = declare_dependency(
+#~ 	dependencies: [libptc_dep],
+#~ 	include_directories: dep_inc_dirs,
+#~ 	link_with: libptc
+	#sources: cpp_sources
+	#objects: [libptc]
+#~ )
+
 libptc_dep = libptc_proj.get_variable('libptc_dep')
 
 # Include subdirectories
