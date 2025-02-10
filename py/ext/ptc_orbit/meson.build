@@ -5,6 +5,6 @@ py_sources = files([
 
 python.install_sources(
     py_sources,
-    subdir: 'ext/ptc_prbit',
+    subdir: 'ext/ptc_orbit',
     # pure: true,
 )        
