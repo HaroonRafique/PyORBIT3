@@ -29,14 +29,14 @@ BunchTuneAnalysis::~BunchTuneAnalysis()
 {
 }
 
-void BunchTuneAnalysis::assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay){
-	betax = bx;
-	alphax = ax;
-	etax = dx;
-	etapx = dpx;
-	betay = by;
-	alphay = ay;
-}
+//~ void BunchTuneAnalysis::assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay){
+	//~ betax = bx;
+	//~ alphax = ax;
+	//~ etax = dx;
+	//~ etapx = dpx;
+	//~ betay = by;
+	//~ alphay = ay;
+//~ }
 
 /** Overloaded to include vertical dispersions **/
 void BunchTuneAnalysis::assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay, double dy, double dpy)

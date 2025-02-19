@@ -27,7 +27,7 @@ class BunchTuneAnalysis: public OrbitUtils::CppPyWrapper
 		void analyzeBunch(Bunch* bunch);
 
 		/** Assigns Twiss values at location of calculator */
-		void assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay);
+		//~ void assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay);
 
 		/** Assigns Twiss values at location of calculator */		
 		void assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay, double dy, double dpy);
