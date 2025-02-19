@@ -211,9 +211,11 @@ class TeapotTuneAnalysisNode(DriftTEAPOT):
     def setLatticeLength(self, lattlength):
         self.lattlength = lattlength
 
-    def assignTwiss(self, betax, alphax, etax, etapx, betay, alphay):
-        self.bunchtune.assignTwiss(betax, alphax, etax, etapx, betay, alphay)
+	def assignTwiss(self, betax, alphax, etax, etapx, betay, alphay, etay=0.0, etapy=0.0):
+		self.bunchtune.assignTwiss(betax, alphax, etax, etapx, betay, alphay, etay, etapy)
 
+	def assignClosedOrbit(self, x, xp, y, yp):
+		self.bunchtune.assignClosedOrbit(x, xp, y, yp)
 
 class TeapotBPMSignalNode(DriftTEAPOT):
     def __init__(self, name="BPMSignal no name"):
