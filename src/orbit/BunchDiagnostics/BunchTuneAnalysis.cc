@@ -16,6 +16,12 @@ BunchTuneAnalysis::BunchTuneAnalysis(): CppPyWrapper(NULL)
 	etapx = 0;
 	betay = 0;
 	alphay = 0;
+	etay = 0.;
+	etapy = 0.;
+	cox = 0.;
+	coxp = 0.;
+	coy = 0.;
+	coyp = 0.;
 }
 
 /** Destructor */
@@ -32,7 +38,32 @@ void BunchTuneAnalysis::assignTwiss(double bx, double ax, double dx, double dpx,
 	alphay = ay;
 }
 
+/** Overloaded to include vertical dispersions **/
+void BunchTuneAnalysis::assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay, double dy, double dpy)
+{
+ 	betax  = bx;
+	alphax = ax;
+	etax   = dx;
+	etapx  = dpx;
+	betay  = by;
+	alphay = ay;
+	etay   = dy;
+	etapy  = dpy;
+}
+
+/** include the closed orbit in the analyzeBunch function **/
+void BunchTuneAnalysis::assignClosedOrbit(double x, double xp, double y, double yp)
+{
+	cox    = x;
+	coxp   = xp;
+	coy    = y;
+	coyp   = yp;
+}
+
 /** Performs the Tune analysis of the bunch */
+/** Updated 19.02.25 to include closed orbit and vertical dispersion terms
+ * as per CERNs version of PyORBIT. Haroon Rafique STFC ISIS Accelerator Physics Group
+*/
 void BunchTuneAnalysis::analyzeBunch(Bunch* bunch){
 
 	//initialization
@@ -63,10 +94,14 @@ void BunchTuneAnalysis::analyzeBunch(Bunch* bunch){
 			double Etot = syncPart->getEnergy() + syncPart->getMass();
 			double dpp = 1/(beta*beta)*part_coord_arr[i][5]/Etot;
 
-			double xval = (x - etax * dpp)/sqrt(betax);
-			double xpval = (xp - etapx * dpp) * sqrt(betax) + xval * alphax;
-			double yval = y / sqrt(betay);
-			double ypval = (yp + y * alphay/betay) * sqrt(betay);
+			//~ double xval = (x - etax * dpp)/sqrt(betax);
+			//~ double xpval = (xp - etapx * dpp) * sqrt(betax) + xval * alphax;
+			//~ double yval = y / sqrt(betay);
+			//~ double ypval = (yp + y * alphay/betay) * sqrt(betay);
+            double xval  = ( x - cox  - etax  * dpp) / sqrt(betax);
+			double xpval = (xp - coxp - etapx * dpp) * sqrt(betax) + xval * alphax;
+			double yval  = ( y - coy  - etay  * dpp) / sqrt(betay);
+			double ypval = (yp - coyp - etapy * dpp) * sqrt(betay) + yval * alphay;
 
 			double angle = atan2(xpval, xval);
 			if(angle < 0.) angle += (2.0*OrbitConst::PI);
@@ -85,11 +120,15 @@ void BunchTuneAnalysis::analyzeBunch(Bunch* bunch){
 			if(yTune < 0.) yTune += 1.;
 			bunch->getParticleAttributes("ParticlePhaseAttributes")->attValue(i, 1) = yPhase;
 			bunch->getParticleAttributes("ParticlePhaseAttributes")->attValue(i, 3) = yTune;
-
-			double xcanonical = x - etax * dpp;
-			double ycanonical = y;
-			double xpfac = xp - etapx * dpp;
-			double ypfac = yp;
+			
+            double xcanonical = x - cox - etax * dpp;
+			double ycanonical = y - coy - etay * dpp;
+			double xpfac = xp - coxp - etapx * dpp;
+			double ypfac = yp - coyp - etapy * dpp;
+			//~ double xcanonical = x - etax * dpp;
+			//~ double ycanonical = y;
+			//~ double xpfac = xp - etapx * dpp;
+			//~ double ypfac = yp;
 			double pxcanonical =  xpfac + xcanonical * (alphax/betax);
 			double pycanonical =  ypfac + ycanonical * (alphay/betay);
 			double xAction = xcanonical  *  xcanonical / betax + pxcanonical * pxcanonical * betax;
