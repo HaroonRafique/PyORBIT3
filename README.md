@@ -30,12 +30,6 @@ git clone https://github.com/HaroonRafique/PyORBIT3.git
 
 ### Pip Setup
 
-#### Ubuntu based distributions:
-```
-sudo apt-get update
-sudo apt-get install -y  build-essential python3 libfftw3-dev python3-venv libpython3-dev pkg-config git
-```
-
 #### Redhat based distributions:
 ```
 python3 -m venv env
@@ -44,11 +38,22 @@ dnf group install -y "Development Tools"
 dnf install -y python3 python3-devel fftw3 fftw3-devel
 pip install setuptools-scm
 pip install meson-python
+pip install -r requirements.txt
 ```
 As this is a new instance of python you should install all reauired python packages with pip.
 To see all installed python libraries use:
 ```
 pip list
+```
+A set of required libraries is provided in the PTC version of PyORBIT3, and can be installed with:
+```
+pip install -r requirements.txt
+```
+
+#### Ubuntu based distributions:
+```
+sudo apt-get update
+sudo apt-get install -y  build-essential python3 libfftw3-dev python3-venv libpython3-dev pkg-config git
 ```
 
 #### MacOS
@@ -98,6 +103,17 @@ Alternatively if you don't plan to modify PyORBIT's code
 ```
 pip install .
 ```
+
+Alternately one may test the build using:
+```
+meson setup build
+```
+If this is successful:
+```
+cd build
+meson compile
+```
+Note that this does not install the libraries, only confirms that they compile successfully.
 
 
 ## 4. Run full SNS linac example
