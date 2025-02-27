@@ -244,10 +244,6 @@ inc = include_directories([
 	'orbit/Apertures'    
 ])
 
-
-#~ ptc_sources = libptc_dep.get_variable('sources')
-#~ ptc_includes = libptc_dep.get_variable('include_directories')
-
 core_lib = library('core',
     sources: sources,
     include_directories: inc,
