@@ -1,5 +1,11 @@
 # PyOrbit3 package installation
 
+## Notes
+- This compilation (with PTC) is only tested on Redhat Fedora 40
+- As such instructions may be incomplete on other platforms
+- It is suggested to create a virtual environment and install PTC-PyORBIT3 there
+
+
 ## 1. Introduction
 This guide provides instructions how to install PyORBIT code. <br>
 This guide doesn't cover MPI enabled installation. <br>
@@ -19,7 +25,7 @@ The following configurations are included in CI testing, versions will change as
 First step is to clone the source code:
 
 ```bash
-git clone https://github.com/PyORBIT-Collaboration/PyORBIT3.git
+git clone https://github.com/HaroonRafique/PyORBIT3.git
 ```
 
 ### Pip Setup
@@ -32,10 +38,17 @@ sudo apt-get install -y  build-essential python3 libfftw3-dev python3-venv libpy
 
 #### Redhat based distributions:
 ```
+python3 -m venv env
+source env/bin/activate
 dnf group install -y "Development Tools"
 dnf install -y python3 python3-devel fftw3 fftw3-devel
 pip install setuptools-scm
 pip install meson-python
+```
+As this is a new instance of python you should install all reauired python packages with pip.
+To see all installed python libraries use:
+```
+pip list
 ```
 
 #### MacOS
@@ -78,12 +91,6 @@ pip install -U meson-python setuptools setuptools-scm
 If you plan to modify PyORBIT's code, install it in editable mode. 
 You will NOT need to rebuild after modifications to the code. [Meson](MesonBuild.md) will rebuild as necessary on import.
 ```
-PYORBIT_DIR="${PWD}"
-cd "${PYORBIT_DIR}/ext"
-git clone --branch=master https://github.com/hannes-bartosik/PTC.git
-cd PTC
-mkdir obj/
-cd "${PYORBIT_DIR}"
 pip install --no-build-isolation --editable .
 ```
 
@@ -102,5 +109,8 @@ cd examples/SNS_Linac/pyorbit3_linac_model/
 python pyorbit3_sns_linac_mebt_hebt2.py
 ```
 
+## 5. Run PTC example
+
+Navigate to your **examples** directory and launch the jupyter notebook provided to test the ptc installation.
 
 
