@@ -68,6 +68,26 @@ class SC1D_AccNode(DriftTEAPOT):
         self.lspacecharge.assignImpedance(py_cmplx_arr)
 
 
+class SC1D_CalcAccNode(DriftTEAPOT):
+    """Zero-length lattice node backed by an existing LSpaceChargeCalc."""
+
+    def __init__(self, lspacecharge: LSpaceChargeCalc, name="long sc node") -> None:
+        DriftTEAPOT.__init__(self, name)
+        self.lspacecharge = lspacecharge
+        self.setType("long sc node")
+        self.setLength(0.0)
+
+    def trackBunch(self, bunch: Bunch) -> None:
+        self.lspacecharge.trackBunch(bunch)
+
+    def track(self, params_dict: dict) -> None:
+        bunch = params_dict["bunch"]
+        self.lspacecharge.trackBunch(bunch)
+
+    def assignImpedance(self, py_cmplx_arr: list[float]) -> None:
+        self.lspacecharge.assignImpedance(py_cmplx_arr)
+
+
 class FreqDep_SC1D_AccNode(DriftTEAPOT):
     """Longitudinal space charge node (frequency-dependent)."""
 

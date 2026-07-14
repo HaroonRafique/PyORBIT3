@@ -49,6 +49,9 @@ public:
 	/** Assigns the real and imaginary parts of the machine impedance for index n**/
 	void assignImpedanceValue(int n, double real, double imag);
 
+	/** Returns the longitudinal phase length used by this calculator. **/
+	double getLength();
+
 	/** Routine for calculating the kick to the particle **/
 	double _kick(double angle);
 

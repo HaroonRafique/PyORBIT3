@@ -101,6 +101,10 @@ void LSpaceChargeCalc::assignImpedanceValue(int n, double real, double imag) {
     _zImped_n[n + 1] = std::complex<double>(real, imag);
 }
 
+double LSpaceChargeCalc::getLength() {
+    return length;
+}
+
 void LSpaceChargeCalc::trackBunch(Bunch *bunch) {
     int nPartsGlobal = bunch->getSizeGlobal();
     if (nPartsGlobal < nMacrosMin)

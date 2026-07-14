@@ -152,6 +152,12 @@ extern "C"
 		return Py_None;
 	}
 
+	static PyObject* LSpaceChargeCalc_getLength(PyObject *self, PyObject *args){
+		pyORBIT_Object* pyLSpaceChargeCalc = (pyORBIT_Object*) self;
+		LSpaceChargeCalc* cpp_LSpaceChargeCalc = (LSpaceChargeCalc*) pyLSpaceChargeCalc->cpp_obj;
+		return Py_BuildValue("d", cpp_LSpaceChargeCalc->getLength());
+	}
+
 
 //trackBunchBunch(Bunch* bunch)
   static PyObject* LSpaceChargeCalc_trackBunch(PyObject *self, PyObject *args){
@@ -195,6 +201,7 @@ extern "C"
 		{ "setNumModes", LSpaceChargeCalc_setNumModes, METH_VARARGS, "set number of FFT modes used to calculate energy kick"},
 		{ "setUseGrad", LSpaceChargeCalc_setUseGrad, METH_VARARGS, "set whether to use gradient-based solver"},
 		{ "setSmoothGrad", LSpaceChargeCalc_setSmoothGrad, METH_VARARGS, "set whether to use smooth gradients"},
+		{ "getLength", LSpaceChargeCalc_getLength, METH_VARARGS, "returns the longitudinal phase length"},
 		{NULL}
   };
 

@@ -9,6 +9,7 @@
 ##   space charge node to the lattice
 
 from orbit.space_charge.sc1d.sc1DNode import SC1D_AccNode
+from orbit.space_charge.sc1d.sc1DNode import SC1D_CalcAccNode
 from orbit.space_charge.sc1d.sc1DNode import FreqDep_SC1D_AccNode
 from orbit.space_charge.sc1d.sc1DNode import BetFreqDep_SC1D_AccNode
 
@@ -17,5 +18,6 @@ from orbit.space_charge.sc1d.scLatticeModifications import addLongitudinalSpaceC
 
 __all__ = []
 __all__.append("sc1DNode")
+__all__.append("SC1D_CalcAccNode")
 __all__.append("addLongitudinalSpaceChargeNode")
 __all__.append("addLongitudinalSpaceChargeNodeAsChild")

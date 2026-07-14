@@ -8,12 +8,21 @@ from orbit.utils import orbitFinalize
 from orbit.lattice import AccLattice, AccNode, AccActionsContainer, AccNodeBunchTracker
 
 # import SC acc. nodes
-from orbit.space_charge.sc1d import SC1D_AccNode
-from orbit.space_charge.sc1d import FreqDep_SC1D_AccNode
-from orbit.space_charge.sc1d import BetFreqDep_SC1D_AccNode
+from orbit.space_charge.sc1d.sc1DNode import SC1D_AccNode
+from orbit.space_charge.sc1d.sc1DNode import SC1D_CalcAccNode
+from orbit.space_charge.sc1d.sc1DNode import FreqDep_SC1D_AccNode
+from orbit.space_charge.sc1d.sc1DNode import BetFreqDep_SC1D_AccNode
 
 # import teapot drift class
 from orbit.teapot import DriftTEAPOT
+
+
+def _as_sc1d_node(sc1D_node):
+    if isinstance(sc1D_node, AccNode):
+        return sc1D_node
+    if hasattr(sc1D_node, "trackBunch"):
+        return SC1D_CalcAccNode(sc1D_node)
+    orbitFinalize("Longitudinal space charge node must be an AccNode or LSpaceChargeCalc-like object.")
 
 
 def addLongitudinalSpaceChargeNode(lattice, position, sc1D_node):
@@ -22,6 +31,7 @@ def addLongitudinalSpaceChargeNode(lattice, position, sc1D_node):
     """
     length_tolerance = 0.0001
     lattice.initialize()
+    sc1D_node = _as_sc1d_node(sc1D_node)
     position_start = position
     position_stop = position + sc1D_node.getLength()
     (node_start_ind, node_stop_ind, z, ind) = (-1, -1, 0.0, 0)
@@ -62,8 +72,11 @@ def addLongitudinalSpaceChargeNode(lattice, position, sc1D_node):
     lattice.getNodes()[node_start_ind : node_stop_ind + 1] = nodes_new_arr
     # initialize the lattice
     lattice.initialize()
+    return nodes_new_arr
 
 
 def addLongitudinalSpaceChargeNodeAsChild(lattice, AccNode, scNode):
+    scNode = _as_sc1d_node(scNode)
     AccNode.addChildNode(scNode, AccNode.BODY, 0, AccNode.BEFORE)
     lattice.initialize()
+    return scNode
