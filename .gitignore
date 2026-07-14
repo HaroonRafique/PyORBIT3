@@ -1,6 +1,7 @@
 build
 subprojects/libptc_orbit
 subprojects/.wraplock
+Maxwellian_bend_for_ptc.txt
 PyORBIT.egg-info
 .vscode
 **/*.pyc
