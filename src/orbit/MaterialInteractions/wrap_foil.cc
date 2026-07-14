@@ -81,6 +81,55 @@ extern "C" {
 	}
 
 
+	/** Returns the global number of foil hits. */
+	static PyObject* Foil_getFoilHitsGlobal(PyObject *self, PyObject *args){
+		Foil* cpp_Foil = (Foil*)((pyORBIT_Object*) self)->cpp_obj;
+		return Py_BuildValue("i", cpp_Foil->getFoilHitsGlobal());
+	}
+
+	/** Returns the local number of foil hits. */
+	static PyObject* Foil_getFoilHitsLocal(PyObject *self, PyObject *args){
+		Foil* cpp_Foil = (Foil*)((pyORBIT_Object*) self)->cpp_obj;
+		return Py_BuildValue("i", cpp_Foil->getFoilHitsLocal());
+	}
+
+	/** Sets the local number of foil hits. */
+	static PyObject* Foil_setFoilHitsLocal(PyObject *self, PyObject *args){
+		Foil* cpp_Foil = (Foil*)((pyORBIT_Object*) self)->cpp_obj;
+		int nHits;
+		if(!PyArg_ParseTuple(args,"i:setFoilHitsLocal",&nHits)){
+			ORBIT_MPI_Finalize("Foil - setFoilHitsLocal(nHits) - parameters are needed.");
+		}
+		cpp_Foil->setFoilHitsLocal(nHits);
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+	/** Returns the global number of losses at the foil. */
+	static PyObject* Foil_getFoilLossesGlobal(PyObject *self, PyObject *args){
+		Foil* cpp_Foil = (Foil*)((pyORBIT_Object*) self)->cpp_obj;
+		return Py_BuildValue("i", cpp_Foil->getFoilLossesGlobal());
+	}
+
+	/** Returns the local number of losses at the foil. */
+	static PyObject* Foil_getFoilLossesLocal(PyObject *self, PyObject *args){
+		Foil* cpp_Foil = (Foil*)((pyORBIT_Object*) self)->cpp_obj;
+		return Py_BuildValue("i", cpp_Foil->getFoilLossesLocal());
+	}
+
+	/** Sets the local number of losses at the foil. */
+	static PyObject* Foil_setFoilLossesLocal(PyObject *self, PyObject *args){
+		Foil* cpp_Foil = (Foil*)((pyORBIT_Object*) self)->cpp_obj;
+		int nLost;
+		if(!PyArg_ParseTuple(args,"i:setFoilLossesLocal",&nLost)){
+			ORBIT_MPI_Finalize("Foil - setFoilLossesLocal(nLost) - parameters are needed.");
+		}
+		cpp_Foil->setFoilLossesLocal(nLost);
+		Py_INCREF(Py_None);
+		return Py_None;
+	}
+
+
 
   //-----------------------------------------------------
   //destructor for python Foil class (__del__ method).
@@ -96,7 +145,13 @@ extern "C" {
 	static PyMethodDef FoilClassMethods[] = {
 		{ "traverseFoilFullScatter", Foil_traverseFoilFullScatter, METH_VARARGS,"Performs the foil scatter of the bunch."},
 		{ "traverseFoilSimpleScatter", Foil_traverseFoilSimpleScatter, METH_VARARGS,"Performs the foil scatter of the bunch."},
-   {NULL}
+		{ "getFoilHitsGlobal", Foil_getFoilHitsGlobal, METH_VARARGS, "Returns global number of hits on the foil."},
+		{ "getFoilHitsLocal", Foil_getFoilHitsLocal, METH_VARARGS, "Returns local number of hits on the foil."},
+		{ "setFoilHitsLocal", Foil_setFoilHitsLocal, METH_VARARGS, "Sets local number of hits on the foil."},
+		{ "getFoilLossesGlobal", Foil_getFoilLossesGlobal, METH_VARARGS, "Returns global number of lost particles on the foil."},
+		{ "getFoilLossesLocal", Foil_getFoilLossesLocal, METH_VARARGS, "Returns local number of lost particles on the foil."},
+		{ "setFoilLossesLocal", Foil_setFoilLossesLocal, METH_VARARGS, "Sets local number of lost particles on the foil."},
+		{NULL}
   	};
 
 	static PyMemberDef FoilClassMembers [] = {

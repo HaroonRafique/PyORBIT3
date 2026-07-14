@@ -44,6 +44,10 @@ Foil::Foil(double xmin, double xmax, double ymin, double ymax, double thick): Cp
 	thick_ = thick;
 	length_ = 0.0;
 	ma_ = 0;
+	nHits = 0;
+	nLost = 0;
+	nHitsGlobal = 0;
+	nLostGlobal = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -147,6 +151,8 @@ void Foil::traverseFoilSimpleScatter(Bunch* bunch){
 		}
 	}
 
+	ORBIT_MPI_Allreduce(&nHits, &nHitsGlobal, 1, MPI_INT, MPI_SUM, bunch->getMPI_Comm_Local()->comm);
+	ORBIT_MPI_Allreduce(&nLost, &nLostGlobal, 1, MPI_INT, MPI_SUM, bunch->getMPI_Comm_Local()->comm);
 }
 
 
@@ -299,6 +305,9 @@ void Foil::traverseFoilFullScatter(Bunch* bunch, Bunch* lostbunch){
 	bunch->compress();
 	double newtime = syncPart->getTime() + length/( syncPart->getBeta()*OrbitConst::c );
 	syncPart->setTime(newtime);
+
+	ORBIT_MPI_Allreduce(&nHits, &nHitsGlobal, 1, MPI_INT, MPI_SUM, bunch->getMPI_Comm_Local()->comm);
+	ORBIT_MPI_Allreduce(&nLost, &nLostGlobal, 1, MPI_INT, MPI_SUM, bunch->getMPI_Comm_Local()->comm);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -605,4 +614,28 @@ void Foil::loseParticle(Bunch* bunch, Bunch* lostbunch, int ip, int& nLost, int&
 	foil_flag = 0;
 	zrl = -1.;
 
+}
+
+int Foil::getFoilHitsGlobal(){
+	return nHitsGlobal;
+}
+
+int Foil::getFoilHitsLocal(){
+	return nHits;
+}
+
+void Foil::setFoilHitsLocal(int nHits_new){
+	nHits = nHits_new;
+}
+
+int Foil::getFoilLossesGlobal(){
+	return nLostGlobal;
+}
+
+int Foil::getFoilLossesLocal(){
+	return nLost;
+}
+
+void Foil::setFoilLossesLocal(int nLost_new){
+	nLost = nLost_new;
 }
