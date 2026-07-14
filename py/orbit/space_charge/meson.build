@@ -4,6 +4,7 @@ subdir('directforce2p5d')
 subdir('sc2dslicebyslice')
 subdir('sc3d')
 subdir('sc2p5d')
+subdir('analytical')
 
 
 py_sources = files([
