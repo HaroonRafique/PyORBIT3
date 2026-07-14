@@ -29,6 +29,12 @@ class BunchTuneAnalysis: public OrbitUtils::CppPyWrapper
 		//** Assigns Twiss values at location of calculator */
 		void assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay);
 
+		//** Assigns Twiss values including vertical dispersion at location of calculator */
+		void assignTwiss(double bx, double ax, double dx, double dpx, double by, double ay, double dy, double dpy);
+
+		//** Assigns closed orbit values at location of calculator */
+		void assignClosedOrbit(double x, double xp, double y, double yp);
+
 		/** Returns the average value for coordinate with index ic */
 		double getTune(int ic);
 
@@ -41,6 +47,12 @@ class BunchTuneAnalysis: public OrbitUtils::CppPyWrapper
 		double etapx;
 		double betay;
 		double alphay;
+		double etay;
+		double etapy;
+		double cox;
+		double coxp;
+		double coy;
+		double coyp;
 
 };
 
