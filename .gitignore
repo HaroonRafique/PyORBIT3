@@ -1,4 +1,6 @@
 build
+subprojects/libptc_orbit
+subprojects/.wraplock
 PyORBIT.egg-info
 .vscode
 **/*.pyc

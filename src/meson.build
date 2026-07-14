@@ -291,6 +291,22 @@ core_lib = library('core',
 
 core_dep = declare_dependency(link_with : core_lib)
 
+if get_option('enable_ptc')
+    libptc_orbit_proj = subproject('libptc_orbit')
+    libptc_orbit_dep = libptc_orbit_proj.get_variable('libptc_orbit_dep')
+    ptc_cpp_sources = libptc_orbit_proj.get_variable('cpp_sources')
+    ptc_dep_inc_dirs = libptc_orbit_proj.get_variable('dep_inc_dirs')
+
+    python.extension_module(
+        'pylibptc_orbit',
+        sources : ptc_cpp_sources,
+        include_directories : [inc, ptc_dep_inc_dirs],
+        dependencies : dependencies + [core_dep, libptc_orbit_dep],
+        cpp_args : cpp_args,
+        install : true,
+    )
+endif
+
 python.extension_module('orbit_mpi',
       sources: [base + '/mpi_init.cc'],
       include_directories: inc,
