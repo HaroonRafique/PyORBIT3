@@ -11,12 +11,13 @@ The PTC branch adds:
 - selected CERN-era compatibility updates for 1D longitudinal space charge,
   tune analysis, analytical Gaussian space charge, and foil hit/loss counters.
 
-The PTC source is not vendored in this repository. It is consumed as a Meson
-subproject from a sibling checkout of the PTC repository.
+The PTC source is not vendored in this repository. The PTC checkout can live
+beside PyORBIT3, but Meson must be able to find it through the subproject path
+`subprojects/libptc_orbit`.
 
 ## Repositories
 
-Clone both repositories into the same workspace:
+Clone PyORBIT3 and PTC side by side:
 
 ```bash
 git clone --branch PTC git@github.com:HaroonRafique/PyORBIT3.git
@@ -34,10 +35,27 @@ workspace/
 Link the PTC checkout into PyORBIT3 as the Meson subproject:
 
 ```bash
-cd workspace/PyORBIT3
+cd PyORBIT3
 mkdir -p subprojects
 ln -s ../../PTC subprojects/libptc_orbit
 ```
+
+This side-by-side layout is the recommended developer setup when editing both
+repositories. It keeps each repository's Git state separate while still giving
+Meson the `subprojects/libptc_orbit` path required by
+`subproject('libptc_orbit')`.
+
+For a one-off build where you do not plan to edit PTC, you can instead clone
+PTC directly into `subprojects/libptc_orbit`:
+
+```bash
+cd PyORBIT3
+mkdir -p subprojects
+git clone git@github.com:HaroonRafique/PTC.git subprojects/libptc_orbit
+```
+
+That avoids the symlink, but it creates a nested Git checkout under PyORBIT3,
+which can make branch/status handling less clear when developing both projects.
 
 If `subprojects/libptc_orbit` already exists and is not the intended PTC
 checkout, fix that before building. The PTC-enabled build expects that path to
@@ -87,7 +105,7 @@ debugging a specific build problem.
 Create and activate a local virtual environment:
 
 ```bash
-cd workspace/PyORBIT3
+cd PyORBIT3
 python3 -m venv ../venv
 source ../venv/bin/activate
 python -m pip install -U pip
@@ -105,9 +123,7 @@ python -m ipykernel install --sys-prefix \
     --display-name "PyORBIT3 + PTC (venv)"
 ```
 
-The `ptc_pyorbit/build_instructions_PTC_PyORBIT3` script uses the same policy:
-all Python packages are installed into a local virtual environment, not into the
-system Python.
+Install Python packages into a virtual environment, not into the system Python.
 
 ## PTC-enabled build
 
@@ -131,8 +147,7 @@ first detected MPI implementation. The supported values are:
 
 Meson discovers MPI through `pkg-config`. If your MPI installation provides
 `mpicc` but not a `.pc` file, generate a local pkg-config file and prepend its
-directory to `PKG_CONFIG_PATH`. The integrated handoff script writes this under
-`integrated_build_artifacts/pkgconfig/<mpi>.pc` from `mpicc -show`.
+directory to `PKG_CONFIG_PATH`.
 
 ## PyORBIT3-only fallback
 
@@ -147,68 +162,11 @@ python -m pip install --no-build-isolation --editable . \
 With `-Denable_ptc=false`, `pylibptc_orbit` and `ext.ptc_orbit` are not
 installed. Importing `ext.ptc_orbit` will fail by design.
 
-## Reproducing the handoff build script
-
-The PTC-PyORBIT3 handoff script is in the sibling handoff directory:
-
-```text
-ptc_pyorbit/build_instructions_PTC_PyORBIT3
-```
-
-It is intended for a fresh workspace. To use that script directly for this fork
-and branch, run it with PyORBIT3 overridden to Haroon Rafique's fork:
-
-```bash
-PYORBIT_REPO_URL=git@github.com:HaroonRafique/PyORBIT3.git \
-PYORBIT_REF=PTC \
-PTC_REPO_URL=git@github.com:HaroonRafique/PTC.git \
-./build_instructions_PTC_PyORBIT3
-```
-
-The important defaults are:
-
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `PYORBIT_REPO_URL` | `git@github.com:PyORBIT-Collaboration/PyORBIT3.git` | PyORBIT3 repo used by the original handoff script. For this branch, use `git@github.com:HaroonRafique/PyORBIT3.git` and `PYORBIT_REF=PTC` or clone this branch directly. |
-| `PTC_REPO_URL` | `git@github.com:HaroonRafique/PTC.git` | PTC source repository. |
-| `PYORBIT_DIR` | `./PyORBIT3` | PyORBIT3 checkout path. |
-| `PTC_DIR` | `./PTC` | PTC checkout path. |
-| `PYORBIT_REF` | empty | Optional PyORBIT3 branch, tag, or commit to check out after clone. Use `PTC` for this branch. |
-| `PTC_REF` | empty | Optional PTC branch, tag, or commit to check out after clone. |
-| `CLONE_PYORBIT` | `1` | Clone PyORBIT3 if `PYORBIT_DIR` is empty. Set to `0` to require an existing checkout. |
-| `CLONE_PTC` | `1` | Clone PTC if `PTC_DIR` is empty. Set to `0` to require an existing checkout. |
-| `VENV_DIR` | `./venv` | Local virtual environment. |
-| `ARTIFACT_DIR` | `./integrated_build_artifacts` | Generated artifacts, including MPI pkg-config fallback files. |
-| `LOG_DIR` | `./integrated_build_outputs` | Build logs. |
-| `PYTHON_BOOTSTRAP` | `python3` | Python used to create the virtual environment. |
-| `MPI_CHOICE` | `auto` | MPI choice passed to `-DUSE_MPI`. |
-| `ENABLE_PTC` | `1` | Build PTC by default. |
-| `RUN_PTC_LATTICE_TEST` | `1` | Read the PTC flat file after building. |
-| `RUN_FULL_TESTS` | `0` | Skip full pytest unless explicitly enabled. |
-| `FLAT_FILE` | `./PTC-PyORBIT_flat_file.madx.flt` | First PTC smoke-test lattice. |
-| `VERIFY_REQUIREMENTS` | `numpy scipy matplotlib pytest` | Extra verification/runtime packages installed into the venv. |
-| `JUPYTER_REQUIREMENTS` | `notebook ipykernel nbconvert nbformat` | Notebook packages installed into the venv. |
-| `JUPYTER_KERNEL_NAME` | `pyorbit3-ptc` | Venv-backed Jupyter kernel name. |
-| `JUPYTER_KERNEL_DISPLAY_NAME` | `PyORBIT3 + PTC (venv)` | Jupyter display name for the venv kernel. |
-
-The script also installs these verification/notebook packages into the venv:
-
-```text
-numpy scipy matplotlib pytest notebook ipykernel nbconvert nbformat
-```
-
-For this already-integrated `PTC` branch, the script's patching steps are
-already present in the source tree: `enable_ptc`, `py/ext/ptc_orbit`, and
-`pylibptc_orbit` wiring in `src/meson.build`.
-
 ## PTC smoke test
 
-Use the MAD-X-generated flat file from the handoff bundle for the first PTC
-runtime check:
-
-```text
-PTC-PyORBIT_flat_file.madx.flt
-```
+The repository does not currently include a validated PTC flat file. To test
+`PTC_Lattice.readPTC(...)`, provide a MAD-X-generated PTC flat file from your
+own validation inputs.
 
 After building, verify the integrated extension and wrapper:
 
@@ -222,7 +180,8 @@ python -c "from ext.ptc_orbit import PTC_Lattice; print('PTC_Lattice import ok')
 Then read the PTC flat file:
 
 ```bash
-python - /path/to/PTC-PyORBIT_flat_file.madx.flt <<'PY'
+PTC_FLAT_FILE=valid_ptc_flat_file.flt
+python - "$PTC_FLAT_FILE" <<'PY'
 from pathlib import Path
 from ext.ptc_orbit import PTC_Lattice
 
@@ -240,15 +199,6 @@ if len(lattice.getNodes()) <= 0:
 if lattice.getLength() <= 0.0:
     raise SystemExit("PTC lattice length is not positive")
 PY
-```
-
-The recorded baseline for the accepted MAD-X flat file is:
-
-```text
-n_nodes 404
-lattice_length 163.36282
-n_harm 2
-gamma_t 5.069309599302147
 ```
 
 Run the MPI smoke test after the basic imports:
@@ -274,7 +224,7 @@ Use this order when validating a fresh PTC-PyORBIT3 build:
 5. Run the minimal MPI-aware PyORBIT3 example.
 6. `import pylibptc_orbit`.
 7. `from ext.ptc_orbit import PTC_Lattice`.
-8. Read `PTC-PyORBIT_flat_file.madx.flt` with `PTC_Lattice.readPTC(...)`.
+8. Read a validated PTC flat file with `PTC_Lattice.readPTC(...)`.
 9. Confirm positive node count and lattice length.
 10. Run full PyORBIT3 tests only after the import/lattice-read smoke test
     passes:
@@ -284,8 +234,7 @@ python -m pytest tests
 ```
 
 The first PTC smoke test proves build/import/flat-file-read readiness. It does
-not replace the standalone `ptc_pyorbit3_examples` acceptance suite or later
-production physics validation.
+not replace later production physics validation.
 
 ## Run a standard PyORBIT3 example
 
