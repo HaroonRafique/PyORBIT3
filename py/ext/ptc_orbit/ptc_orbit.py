@@ -1,5 +1,6 @@
 """PTC lattice helpers for the integrated PyORBIT3 + PTC build."""
 
+import math
 from os import fspath
 
 from orbit.teapot import BaseTEAPOT, TEAPOT_Lattice
@@ -206,6 +207,77 @@ def updateParamsPTC(lattice, bunch):
         node.setParam("orbitpy", orbitpy)
 
     setBunchParamsPTC(bunch)
+
+
+def _require_ptc_status_ok(operation, status):
+    if status != 0:
+        raise RuntimeError(f"{operation} failed with PTC status {status}")
+
+
+def fibre_count():
+    """Return the number of native PTC fibres in the active loaded layout."""
+    status, count = ptc_get_fibre_count_()
+    _require_ptc_status_ok("ptc_get_fibre_count_", status)
+    return count
+
+
+def fibre_name(index):
+    """Return the native PTC fibre name for a 1-based fibre index."""
+    status, name = ptc_get_fibre_name_(index)
+    _require_ptc_status_ok("ptc_get_fibre_name_", status)
+    return name
+
+
+def set_fibre_aperture(index, kind, half_x, half_y, x_offset=0.0, y_offset=0.0, r1=0.0, r2=0.0):
+    """Set a native PTC fibre aperture.
+
+    This helper is intentionally thin; it is mainly useful for tests and for
+    explicit user-side aperture application before querying readback state.
+    """
+    status = ptc_set_fibre_aperture_(
+        index,
+        kind,
+        r1,
+        r2,
+        half_x,
+        half_y,
+        x_offset,
+        y_offset,
+    )
+    _require_ptc_status_ok("ptc_set_fibre_aperture_", status)
+
+
+def fibre_aperture(index):
+    """Return native PTC aperture data for one fibre, or None if inactive."""
+    status, kind, r1, r2, half_x, half_y, x_offset, y_offset, s = ptc_get_fibre_aperture_(index)
+    if status in (2, 3):
+        return None
+    _require_ptc_status_ok("ptc_get_fibre_aperture_", status)
+    if kind <= 0 or not math.isfinite(half_x) or not math.isfinite(half_y):
+        return None
+    return {
+        "index": index,
+        "name": fibre_name(index),
+        "s": s,
+        "kind": kind,
+        "half_x": half_x,
+        "half_y": half_y,
+        "x_offset": x_offset,
+        "y_offset": y_offset,
+        "r1": r1,
+        "r2": r2,
+        "source": "PTC fibre aperture",
+    }
+
+
+def all_fibre_apertures():
+    """Return active native PTC fibre aperture rows from the loaded layout."""
+    rows = []
+    for index in range(1, fibre_count() + 1):
+        row = fibre_aperture(index)
+        if row is not None:
+            rows.append(row)
+    return rows
 
 
 def synchronousSetPTC(ival):
